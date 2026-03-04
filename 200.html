@@ -1511,7 +1511,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 // Register service worker for offline use at the gym
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 </script>
 
