@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Training">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="manifest.json">
+<title>Training Tracker — Summer Ready</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --blue: #2563eb;
+    --blue-50: #eff6ff;
+    --green: #16a34a;
+    --green-50: #f0fdf4;
+    --green-100: #dcfce7;
+    --orange: #ea580c;
+    --orange-50: #fff7ed;
+    --red: #dc2626;
+    --red-50: #fef2f2;
+    --purple: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .header {
+    background: var(--black);
+    color: var(--white);
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+  .header .sub { font-size: 12px; opacity: 0.5; margin-top: 2px; }
+  .header-actions { display: flex; gap: 8px; }
+  .btn {
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--white); color: var(--black); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { background: var(--gray-800); color: var(--gray-300); border: 1px solid var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-700); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { opacity: 0.85; }
+
+  /* Container */
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--gray-200);
+    padding-bottom: 0;
+  }
+  .tab {
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-400);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--gray-600); }
+  .tab.active { color: var(--black); border-bottom-color: var(--black); }
+
+  /* Tab content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ====== WEEKLY LOG TAB ====== */
+  .week-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .week-selector select {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    background: var(--white);
+    cursor: pointer;
+  }
+  .week-phase {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 3px;
+  }
+  .week-phase.p1 { background: var(--blue-50); color: var(--blue); }
+  .week-phase.p2 { background: var(--orange-50); color: var(--orange); }
+  .week-phase.deload { background: var(--green-50); color: var(--green); }
+
+  /* Day cards */
+  .day-card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .day-card-header {
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+    user-select: none;
+  }
+  .day-card-header:hover { background: var(--gray-100); }
+  .day-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .day-dot.upper { background: var(--blue); }
+  .day-dot.lower { background: var(--green); }
+  .day-dot.conditioning { background: var(--orange); }
+  .day-dot.recovery { background: var(--purple); }
+  .day-status {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .day-status.done { color: var(--green); }
+
+  .day-card-body { padding: 0; display: none; }
+  .day-card.open .day-card-body { display: block; }
+  .day-card.open .day-card-header { border-bottom: 1px solid var(--gray-200); }
+
+  .log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .log-table th {
+    text-align: left;
+    padding: 8px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-400);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .log-table td {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--gray-50);
+    vertical-align: middle;
+  }
+  .log-table tr:last-child td { border-bottom: none; }
+  .log-table .ex-name { font-weight: 600; font-size: 13px; }
+  .log-table .ex-target { font-size: 12px; color: var(--gray-400); }
+  .log-table input[type="text"],
+  .log-table input[type="number"] {
+    width: 70px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s;
+  }
+  .log-table input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  .log-table input.filled { border-color: var(--green); background: var(--green-50); }
+  .log-table .notes-input {
+    width: 100%;
+    max-width: 180px;
+  }
+
+  .day-card-footer {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--gray-100);
+  }
+  .complete-btn {
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .complete-btn:hover { opacity: 0.85; }
+  .complete-btn.completed { background: var(--gray-200); color: var(--gray-500); }
+
+  /* ====== EXERCISE INFO BUTTON & MODAL ====== */
+  .ex-info-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-400);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 6px;
+    transition: all 0.15s;
+    vertical-align: middle;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .ex-info-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-50);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal {
+    background: var(--white);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    transform: translateY(10px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+  .modal-muscles {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .muscle-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: var(--blue-50);
+    color: var(--blue);
+  }
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: var(--gray-100);
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+  .modal-close:hover { background: var(--gray-200); }
+
+  .modal-body { padding: 20px 24px 24px; }
+
+  .modal-figure {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .modal-figure svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .modal-section {
+    margin-bottom: 16px;
+  }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+    margin-bottom: 8px;
+  }
+  .modal-section p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--gray-700);
+  }
+  .cue-list {
+    list-style: none;
+    padding: 0;
+  }
+  .cue-list li {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gray-700);
+    padding: 4px 0;
+    padding-left: 20px;
+    position: relative;
+  }
+  .cue-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+  .cue-list.do li::before { background: var(--green); }
+  .cue-list.dont li::before { background: var(--red); }
+
+  .modal-video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1.5px solid var(--blue);
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .modal-video-link:hover {
+    background: var(--blue);
+    color: var(--white);
+  }
+
+  /* ====== WEEKLY CHECK-IN TAB ====== */
+  .checkin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .checkin-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .checkin-card.full-width { grid-column: 1 / -1; }
+  .checkin-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-400);
+    margin-bottom: 8px;
+  }
+  .checkin-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--gray-900);
+  }
+  .checkin-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 6px;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s;
+  }
+  .checkin-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  .checkin-unit {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+  .rating-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .rating-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 6px;
+    background: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .rating-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .rating-btn.selected { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+  /* ====== PROGRESS TAB ====== */
+  .progress-section {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-section h3 {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .progress-table th {
+    text-align: left;
+    padding: 8px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-400);
+    background: var(--gray-50);
+  }
+  .progress-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--gray-50);
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-table .metric-name { font-weight: 600; }
+  .progress-table .target { color: var(--gray-400); font-size: 12px; }
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--gray-100);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 100px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  /* Save indicator */
+  .save-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--gray-900);
+    color: var(--white);
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  .save-indicator.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .header { padding: 16px; }
+    .header h1 { font-size: 16px; }
+    .header .sub { font-size: 11px; }
+    .header-actions { gap: 4px; }
+    .btn { padding: 6px 10px; font-size: 11px; }
+
+    .container { padding: 12px 8px; }
+
+    .tabs { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab { padding: 10px 14px; font-size: 12px; white-space: nowrap; }
+
+    .week-selector { flex-wrap: wrap; gap: 8px; }
+    .week-selector select { font-size: 13px; width: 100%; }
+
+    .day-card-header { padding: 12px 14px; }
+    .day-card-title { font-size: 13px; gap: 6px; }
+
+    /* Mobile exercise table — stack layout */
+    .log-table { font-size: 12px; }
+    .log-table th { padding: 6px 12px; font-size: 9px; }
+    .log-table td { padding: 8px 12px; }
+    .log-table .ex-name { font-size: 12px; }
+    .log-table .ex-target { font-size: 11px; }
+    .log-table input[type="text"],
+    .log-table input[type="number"] { width: 52px; padding: 6px 4px; font-size: 13px; }
+    .log-table .notes-input { max-width: 90px; font-size: 12px; }
+    .log-table .log-cell { width: 56px; min-width: 56px; }
+    .log-table .log-box { width: 50px; }
+
+    .day-card-footer { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+    .day-card-footer span { font-size: 10px; }
+
+    .checkin-grid { grid-template-columns: 1fr; gap: 12px; }
+    .checkin-card { padding: 16px; }
+    .checkin-input { font-size: 15px; padding: 10px; }
+    .checkin-card.full-width div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    .rating-row { gap: 4px; flex-wrap: wrap; }
+    .rating-btn { width: 28px; height: 28px; font-size: 12px; }
+
+    /* Progress table horizontal scroll on mobile */
+    .progress-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .progress-table { min-width: 600px; }
+    .progress-table th, .progress-table td { padding: 8px 10px; font-size: 11px; }
+
+    /* Modal mobile */
+    .modal { max-width: 100%; border-radius: 12px 12px 0 0; max-height: 90vh; }
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .modal-body { padding: 16px 20px 32px; }
+    .modal-header { padding: 16px 20px 12px; }
+    .cue-list li { font-size: 12px; }
+
+    /* Touch-friendly tap targets */
+    .ex-info-btn { width: 22px; height: 22px; font-size: 12px; }
+    .complete-btn { padding: 10px 16px; font-size: 13px; }
+
+    /* Safe area for notch phones */
+    body { padding-bottom: env(safe-area-inset-bottom); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Training Tracker</h1>
+    <div class="sub">Summer Ready — 8 Week Program</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-secondary" onclick="exportData()">Export CSV</button>
+    <button class="btn btn-primary" onclick="saveAll()">Save</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" data-tab="log">Weekly Log</button>
+    <button class="tab" data-tab="checkin">Weekly Check-in</button>
+    <button class="tab" data-tab="progress">Progress</button>
+  </div>
+
+  <!-- ====== WEEKLY LOG ====== -->
+  <div class="tab-content active" id="tab-log">
+    <div class="week-selector">
+      <select id="weekSelect" onchange="renderWeek()"></select>
+      <span class="week-phase" id="weekPhase"></span>
+    </div>
+    <div id="weekDays"></div>
+  </div>
+
+  <!-- ====== WEEKLY CHECK-IN ====== -->
+  <div class="tab-content" id="tab-checkin">
+    <div class="week-selector">
+      <select id="checkinWeekSelect" onchange="renderCheckin()"></select>
+    </div>
+    <div class="checkin-grid">
+      <div class="checkin-card">
+        <div class="checkin-label">Body Weight</div>
+        <input class="checkin-input" type="number" step="0.1" id="ci-weight" placeholder="200" onchange="saveCheckin()">
+        <div class="checkin-unit">lbs (morning, before eating)</div>
+      </div>
+      <div class="checkin-card">
+        <div class="checkin-label">Sessions Completed</div>
+        <input class="checkin-input" type="text" id="ci-sessions" placeholder="4/5" onchange="saveCheckin()">
+        <div class="checkin-unit">completed / planned</div>
+      </div>
+      <div class="checkin-card">
+        <div class="checkin-label">Toe Touch Distance</div>
+        <input class="checkin-input" type="text" id="ci-toe" placeholder="-3 inches" onchange="saveCheckin()">
+        <div class="checkin-unit">+ past toes / - short of toes</div>
+      </div>
+      <div class="checkin-card">
+        <div class="checkin-label">Deep Squat Hold</div>
+        <input class="checkin-input" type="text" id="ci-squat-hold" placeholder="15 sec" onchange="saveCheckin()">
+        <div class="checkin-unit">seconds, heels down</div>
+      </div>
+      <div class="checkin-card">
+        <div class="checkin-label">Energy Level</div>
+        <div class="rating-row" id="ci-energy"></div>
+        <div class="checkin-unit">1 = exhausted, 10 = unstoppable</div>
+      </div>
+      <div class="checkin-card">
+        <div class="checkin-label">Soreness Level</div>
+        <div class="rating-row" id="ci-soreness"></div>
+        <div class="checkin-unit">1 = fine, 10 = can't move</div>
+      </div>
+      <div class="checkin-card full-width">
+        <div class="checkin-label">Top Lifts This Week</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:4px;">
+          <div>
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:4px;">Bench</div>
+            <input class="checkin-input" type="text" id="ci-bench" placeholder="135×8" onchange="saveCheckin()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:4px;">Squat</div>
+            <input class="checkin-input" type="text" id="ci-squat" placeholder="155×8" onchange="saveCheckin()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:4px;">Deadlift</div>
+            <input class="checkin-input" type="text" id="ci-deadlift" placeholder="185×6" onchange="saveCheckin()">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:4px;">OHP</div>
+            <input class="checkin-input" type="text" id="ci-ohp" placeholder="95×10" onchange="saveCheckin()">
+          </div>
+        </div>
+      </div>
+      <div class="checkin-card full-width">
+        <div class="checkin-label">Notes / How I Feel</div>
+        <textarea class="checkin-input" id="ci-notes" placeholder="Any observations, tweaks, wins..." rows="3" style="resize:vertical;" onchange="saveCheckin()"></textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="saveCheckin()" style="margin-bottom:24px;">Save Check-in</button>
+  </div>
+
+  <!-- ====== PROGRESS TAB ====== -->
+  <div class="tab-content" id="tab-progress">
+    <div class="progress-section">
+      <h3>Strength Milestones</h3>
+      <table class="progress-table">
+        <thead><tr><th>Lift</th><th>Wk 1</th><th>Wk 2</th><th>Wk 3</th><th>Wk 4</th><th>Wk 5</th><th>Wk 6</th><th>Wk 7</th><th>Wk 8</th><th>Target</th></tr></thead>
+        <tbody id="strengthProgress"></tbody>
+      </table>
+    </div>
+    <div class="progress-section">
+      <h3>Body Metrics</h3>
+      <table class="progress-table">
+        <thead><tr><th>Metric</th><th>Wk 1</th><th>Wk 2</th><th>Wk 3</th><th>Wk 4</th><th>Wk 5</th><th>Wk 6</th><th>Wk 7</th><th>Wk 8</th><th>Target</th></tr></thead>
+        <tbody id="bodyProgress"></tbody>
+      </table>
+    </div>
+    <div class="progress-section">
+      <h3>Mobility & Conditioning</h3>
+      <table class="progress-table">
+        <thead><tr><th>Metric</th><th>Wk 1</th><th>Wk 2</th><th>Wk 3</th><th>Wk 4</th><th>Wk 5</th><th>Wk 6</th><th>Wk 7</th><th>Wk 8</th><th>Target</th></tr></thead>
+        <tbody id="mobilityProgress"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Exercise Info Modal -->
+<div class="modal-overlay" id="exModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-muscles" id="modalMuscles"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-figure" id="modalFigure"></div>
+      <div class="modal-section">
+        <div class="modal-section-title">How To Do It</div>
+        <p id="modalDesc"></p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Key Cues</div>
+        <ul class="cue-list do" id="modalCues"></ul>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Common Mistakes</div>
+        <ul class="cue-list dont" id="modalMistakes"></ul>
+      </div>
+      <div class="modal-section" style="padding-top:4px;">
+        <a class="modal-video-link" id="modalVideo" href="#" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch Demo Video
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="save-indicator" id="saveIndicator">Saved</div>
+
+<script>
+// ====== DATA MODEL ======
+const PROGRAM = {
+  weeks: 8,
+  days: [
+    {
+      name: 'Day 1 — Upper Strength',
+      type: 'upper',
+      exercises: {
+        1: [
+          { name: 'Barbell Bench Press', target: '4×8', fields: ['weight'] },
+          { name: 'Dumbbell Row (ea)', target: '4×10', fields: ['weight'] },
+          { name: 'Overhead Press', target: '3×10', fields: ['weight'] },
+          { name: 'Lat Pulldown', target: '3×12', fields: ['weight'] },
+          { name: 'Face Pulls', target: '3×15', fields: ['weight'] },
+          { name: 'Bicep Curl (SS)', target: '3×12', fields: ['weight'] },
+          { name: 'Tricep Pushdown (SS)', target: '3×12', fields: ['weight'] },
+        ],
+        2: [
+          { name: 'Barbell Bench Press', target: '5×5', fields: ['weight'] },
+          { name: 'Dumbbell Row (ea)', target: '4×8', fields: ['weight'] },
+          { name: 'Overhead Press', target: '4×6', fields: ['weight'] },
+          { name: 'Lat Pulldown', target: '3×10', fields: ['weight'] },
+          { name: 'Face Pulls', target: '3×15', fields: ['weight'] },
+          { name: 'Bicep Curl (SS)', target: '3×10', fields: ['weight'] },
+          { name: 'Tricep Pushdown (SS)', target: '3×10', fields: ['weight'] },
+        ]
+      }
+    },
+    {
+      name: 'Day 2 — Lower Strength + Core',
+      type: 'lower',
+      exercises: {
+        1: [
+          { name: 'Barbell Back Squat', target: '4×8', fields: ['weight'] },
+          { name: 'Romanian Deadlift', target: '3×10', fields: ['weight'] },
+          { name: 'Walking Lunges (ea)', target: '3×10', fields: ['weight'] },
+          { name: 'Leg Press', target: '3×12', fields: ['weight'] },
+          { name: 'Dead Bug', target: '3×12', fields: [] },
+          { name: 'Pallof Press (ea)', target: '3×10', fields: [] },
+          { name: 'Plank', target: '3×30s', fields: [] },
+        ],
+        2: [
+          { name: 'Barbell Back Squat', target: '5×5', fields: ['weight'] },
+          { name: 'Romanian Deadlift', target: '3×8', fields: ['weight'] },
+          { name: 'Jump Lunges (ea)', target: '3×8', fields: [] },
+          { name: 'Box Jumps', target: '4×5', fields: [] },
+          { name: 'Dead Bug', target: '3×15', fields: [] },
+          { name: 'Pallof Press (ea)', target: '3×12', fields: [] },
+          { name: 'Plank', target: '3×45-60s', fields: [] },
+        ]
+      }
+    },
+    {
+      name: 'Day 3 — Conditioning',
+      type: 'conditioning',
+      exercises: {
+        1: [
+          { name: 'Cardio Session', target: 'See card', fields: [] },
+          { name: 'Post-workout Stretch', target: '10 min', fields: [] },
+        ],
+        2: [
+          { name: 'Sprint Intervals', target: '8×20s/40s', fields: [] },
+          { name: '200m Repeats', target: '4×200m', fields: [] },
+          { name: 'Post-workout Stretch', target: '10 min', fields: [] },
+        ]
+      }
+    },
+    {
+      name: 'Day 4 — Upper Power',
+      type: 'upper',
+      exercises: {
+        1: [
+          { name: 'Incline DB Press', target: '4×10', fields: ['weight'] },
+          { name: 'Cable Row', target: '4×10', fields: ['weight'] },
+          { name: 'Landmine Press', target: '3×10', fields: ['weight'] },
+          { name: 'Chest-Supported DB Row', target: '3×12', fields: ['weight'] },
+          { name: 'Lateral Raises', target: '3×15', fields: ['weight'] },
+          { name: "Farmer's Carry", target: '3×40s', fields: ['weight'] },
+        ],
+        2: [
+          { name: 'Incline DB Press', target: '4×8', fields: ['weight'] },
+          { name: 'Cable Row', target: '4×8', fields: ['weight'] },
+          { name: 'Landmine Press', target: '3×8', fields: ['weight'] },
+          { name: 'Chest-Supported DB Row', target: '3×10', fields: ['weight'] },
+          { name: 'Lateral Raises', target: '3×15', fields: ['weight'] },
+          { name: "Farmer's Carry", target: '3×50s', fields: ['weight'] },
+          { name: 'Med Ball Slam', target: '3×8', fields: [] },
+          { name: 'Band Lateral Shuffle', target: '3×30s', fields: [] },
+        ]
+      }
+    },
+    {
+      name: 'Day 5 — Lower Power + Core',
+      type: 'lower',
+      exercises: {
+        1: [
+          { name: 'Trap Bar Deadlift', target: '4×6', fields: ['weight'] },
+          { name: 'Bulgarian Split Squat (ea)', target: '3×8', fields: ['weight'] },
+          { name: 'Hip Thrust', target: '3×12', fields: ['weight'] },
+          { name: 'Calf Raises', target: '4×15', fields: ['weight'] },
+          { name: 'Hanging Knee Raise', target: '3×10', fields: [] },
+          { name: 'Cable Woodchop (ea)', target: '3×10', fields: [] },
+          { name: 'Side Plank (ea)', target: '3×20s', fields: [] },
+        ],
+        2: [
+          { name: 'Trap Bar Deadlift', target: '5×3', fields: ['weight'] },
+          { name: 'Bulgarian Split Squat (ea)', target: '3×8', fields: ['weight'] },
+          { name: 'Hip Thrust', target: '3×10', fields: ['weight'] },
+          { name: 'Calf Raises', target: '4×15', fields: ['weight'] },
+          { name: 'Hanging Leg Raise', target: '3×10', fields: [] },
+          { name: 'Cable Woodchop (ea)', target: '3×12', fields: [] },
+          { name: 'Side Plank (ea)', target: '3×30s', fields: [] },
+        ]
+      }
+    },
+    {
+      name: 'Day 6 — Active Recovery',
+      type: 'recovery',
+      exercises: {
+        1: [{ name: 'Activity', target: 'Tennis / Bike / Yoga / Rest', fields: [] }],
+        2: [{ name: 'Activity', target: 'Tennis / Bike / Yoga / Rest', fields: [] }]
+      }
+    }
+  ]
+};
+
+// ====== STATE ======
+let data = JSON.parse(localStorage.getItem('trainingData') || '{}');
+if (!data.logs) data.logs = {};
+if (!data.checkins) data.checkins = {};
+
+// Try to load from server (for cross-device sync)
+async function loadFromServer() {
+  try {
+    const res = await fetch('/api/data', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const serverData = await res.json();
+      if (serverData && (serverData.logs || serverData.checkins)) {
+        // Merge: server wins if it has newer/more data
+        const serverSize = JSON.stringify(serverData).length;
+        const localSize = JSON.stringify(data).length;
+        if (serverSize > localSize + 5) {
+          data = serverData;
+          if (!data.logs) data.logs = {};
+          if (!data.checkins) data.checkins = {};
+          localStorage.setItem('trainingData', JSON.stringify(data));
+        }
+      }
+    }
+  } catch (e) { /* offline or not using server — localStorage is fine */ }
+}
+
+function getPhase(week) {
+  if (week === 4) return 'deload';
+  return week <= 4 ? 1 : 2;
+}
+
+function getExercises(dayIdx, week) {
+  const phase = week <= 4 ? 1 : 2;
+  return PROGRAM.days[dayIdx].exercises[phase];
+}
+
+// ====== TABS ======
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'progress') renderProgress();
+    if (tab.dataset.tab === 'checkin') renderCheckin();
+  });
+});
+
+// ====== WEEK SELECTOR ======
+function initWeekSelects() {
+  ['weekSelect', 'checkinWeekSelect'].forEach(id => {
+    const sel = document.getElementById(id);
+    for (let w = 1; w <= 8; w++) {
+      const opt = document.createElement('option');
+      opt.value = w;
+      const phase = getPhase(w);
+      const label = phase === 'deload' ? '(Deload)' : `(Phase ${phase})`;
+      opt.textContent = `Week ${w} ${label}`;
+      sel.appendChild(opt);
+    }
+  });
+}
+initWeekSelects();
+
+// ====== RENDER WEEKLY LOG ======
+function renderWeek() {
+  const week = parseInt(document.getElementById('weekSelect').value);
+  const phase = getPhase(week);
+  const phaseEl = document.getElementById('weekPhase');
+  if (phase === 'deload') {
+    phaseEl.className = 'week-phase deload';
+    phaseEl.textContent = 'Deload Week';
+  } else {
+    phaseEl.className = `week-phase p${phase}`;
+    phaseEl.textContent = `Phase ${phase}`;
+  }
+
+  const container = document.getElementById('weekDays');
+  container.innerHTML = '';
+
+  PROGRAM.days.forEach((day, dayIdx) => {
+    const key = `w${week}d${dayIdx}`;
+    const dayData = data.logs[key] || {};
+    const exercises = getExercises(dayIdx, week);
+    const isCompleted = dayData.completed;
+
+    const card = document.createElement('div');
+    card.className = `day-card${dayIdx === 0 ? ' open' : ''}`;
+    card.innerHTML = `
+      <div class="day-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="day-card-title">
+          <span class="day-dot ${day.type}"></span>
+          ${day.name}
+        </div>
+        <span class="day-status ${isCompleted ? 'done' : ''}">${isCompleted ? 'Done' : ''}</span>
+      </div>
+      <div class="day-card-body">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Exercise</th>
+              <th>Target</th>
+              ${exercises.some(e => e.fields.includes('weight')) ? '<th>Weight</th>' : ''}
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${exercises.map((ex, i) => {
+              const val = dayData[`e${i}_weight`] || '';
+              const note = dayData[`e${i}_note`] || '';
+              return `<tr>
+                <td class="ex-name">${ex.name}${resolveExInfo(ex.name) ? `<button class="ex-info-btn" onclick="event.stopPropagation();openExModal('${ex.name.replace(/'/g,"\\'")}')" title="How to do this exercise">?</button>` : ''}</td>
+                <td class="ex-target">${ex.target}</td>
+                ${ex.fields.includes('weight') ?
+                  `<td><input type="text" class="${val ? 'filled' : ''}" value="${val}" placeholder="lbs" data-key="${key}" data-field="e${i}_weight" onchange="logInput(this)"></td>` :
+                  (exercises.some(e => e.fields.includes('weight')) ? '<td></td>' : '')}
+                <td><input type="text" class="notes-input" value="${note}" placeholder="" data-key="${key}" data-field="e${i}_note" onchange="logInput(this)"></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        <div class="day-card-footer">
+          <span style="font-size:11px;color:var(--gray-400);">Week ${week} ${phase === 'deload' ? '— 80% weight, feel good' : ''}</span>
+          <button class="complete-btn ${isCompleted ? 'completed' : ''}" onclick="toggleComplete('${key}', this)">
+            ${isCompleted ? 'Completed' : 'Mark Complete'}
+          </button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function logInput(el) {
+  const key = el.dataset.key;
+  const field = el.dataset.field;
+  if (!data.logs[key]) data.logs[key] = {};
+  data.logs[key][field] = el.value;
+  if (el.value) el.classList.add('filled');
+  else el.classList.remove('filled');
+  saveData();
+}
+
+function toggleComplete(key, btn) {
+  if (!data.logs[key]) data.logs[key] = {};
+  data.logs[key].completed = !data.logs[key].completed;
+  saveData();
+  renderWeek();
+}
+
+// ====== CHECK-IN ======
+function renderCheckin() {
+  const week = document.getElementById('checkinWeekSelect').value;
+  const ci = data.checkins[`w${week}`] || {};
+
+  document.getElementById('ci-weight').value = ci.weight || '';
+  document.getElementById('ci-sessions').value = ci.sessions || '';
+  document.getElementById('ci-toe').value = ci.toe || '';
+  document.getElementById('ci-squat-hold').value = ci.squatHold || '';
+  document.getElementById('ci-bench').value = ci.bench || '';
+  document.getElementById('ci-squat').value = ci.squat || '';
+  document.getElementById('ci-deadlift').value = ci.deadlift || '';
+  document.getElementById('ci-ohp').value = ci.ohp || '';
+  document.getElementById('ci-notes').value = ci.notes || '';
+
+  renderRating('ci-energy', ci.energy || 0, 'energy');
+  renderRating('ci-soreness', ci.soreness || 0, 'soreness');
+}
+
+function renderRating(containerId, selected, field) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const btn = document.createElement('button');
+    btn.className = `rating-btn ${i === selected ? 'selected' : ''}`;
+    btn.textContent = i;
+    btn.onclick = () => {
+      const week = document.getElementById('checkinWeekSelect').value;
+      if (!data.checkins[`w${week}`]) data.checkins[`w${week}`] = {};
+      data.checkins[`w${week}`][field] = i;
+      saveData();
+      renderRating(containerId, i, field);
+    };
+    container.appendChild(btn);
+  }
+}
+
+function saveCheckin() {
+  const week = document.getElementById('checkinWeekSelect').value;
+  if (!data.checkins[`w${week}`]) data.checkins[`w${week}`] = {};
+  const ci = data.checkins[`w${week}`];
+  ci.weight = document.getElementById('ci-weight').value;
+  ci.sessions = document.getElementById('ci-sessions').value;
+  ci.toe = document.getElementById('ci-toe').value;
+  ci.squatHold = document.getElementById('ci-squat-hold').value;
+  ci.bench = document.getElementById('ci-bench').value;
+  ci.squat = document.getElementById('ci-squat').value;
+  ci.deadlift = document.getElementById('ci-deadlift').value;
+  ci.ohp = document.getElementById('ci-ohp').value;
+  ci.notes = document.getElementById('ci-notes').value;
+  saveData();
+}
+
+// ====== PROGRESS ======
+function renderProgress() {
+  const lifts = [
+    { name: 'Bench Press', field: 'bench', target: '175×5' },
+    { name: 'Squat', field: 'squat', target: '225×5' },
+    { name: 'Deadlift', field: 'deadlift', target: '275×3' },
+    { name: 'OHP', field: 'ohp', target: '135×5' },
+  ];
+  const body = [
+    { name: 'Body Weight', field: 'weight', target: '195-198' },
+  ];
+  const mobility = [
+    { name: 'Toe Touch', field: 'toe', target: 'Past toes' },
+    { name: 'Deep Squat Hold', field: 'squatHold', target: '60 sec' },
+  ];
+
+  function renderRows(items, containerId) {
+    const tbody = document.getElementById(containerId);
+    tbody.innerHTML = items.map(item => {
+      const cells = Array.from({length: 8}, (_, i) => {
+        const ci = data.checkins[`w${i+1}`] || {};
+        const val = ci[item.field] || '';
+        return `<td style="font-weight:${val?'600':'400'};color:${val?'var(--gray-900)':'var(--gray-300)'}">${val || '—'}</td>`;
+      }).join('');
+      return `<tr>
+        <td class="metric-name">${item.name}</td>
+        ${cells}
+        <td class="target">${item.target}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  renderRows(lifts, 'strengthProgress');
+  renderRows(body, 'bodyProgress');
+  renderRows(mobility, 'mobilityProgress');
+}
+
+// ====== PERSISTENCE ======
+function saveData() {
+  localStorage.setItem('trainingData', JSON.stringify(data));
+  // Also sync to server for cross-device access
+  fetch('/api/data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {}); // silent fail if offline
+  showSave();
+}
+
+function saveAll() {
+  saveData();
+  if (document.querySelector('.tab.active').dataset.tab === 'checkin') saveCheckin();
+}
+
+function showSave() {
+  const el = document.getElementById('saveIndicator');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+// ====== EXPORT ======
+function exportData() {
+  let csv = 'Week,Day,Exercise,Target,Weight,Notes,Completed\n';
+  for (let w = 1; w <= 8; w++) {
+    PROGRAM.days.forEach((day, dayIdx) => {
+      const key = `w${w}d${dayIdx}`;
+      const dayData = data.logs[key] || {};
+      const exercises = getExercises(dayIdx, w);
+      exercises.forEach((ex, i) => {
+        const weight = dayData[`e${i}_weight`] || '';
+        const note = dayData[`e${i}_note`] || '';
+        csv += `${w},"${day.name}","${ex.name}","${ex.target}","${weight}","${note}",${dayData.completed ? 'Yes' : 'No'}\n`;
+      });
+    });
+  }
+  csv += '\nWeek,Weight,Sessions,Toe Touch,Squat Hold,Bench,Squat,Deadlift,OHP,Energy,Soreness,Notes\n';
+  for (let w = 1; w <= 8; w++) {
+    const ci = data.checkins[`w${w}`] || {};
+    csv += `${w},${ci.weight||''},${ci.sessions||''},"${ci.toe||''}","${ci.squatHold||''}","${ci.bench||''}","${ci.squat||''}","${ci.deadlift||''}","${ci.ohp||''}",${ci.energy||''},${ci.soreness||''},"${ci.notes||''}"\n`;
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'training-log.csv';
+  a.click();
+}
+
+// ====== EXERCISE INFO DATABASE ======
+const EX_INFO = {
+  'Barbell Bench Press': {
+    muscles: ['Chest', 'Shoulders', 'Triceps'],
+    desc: 'Lie flat on the bench, feet planted. Unrack the bar with arms straight. Lower the bar to mid-chest, then press straight back up to lockout.',
+    cues: ['Retract shoulder blades — squeeze them together before you unrack', 'Bar touches mid-chest, not neck or belly', 'Drive feet into floor for leg drive', 'Wrists stacked straight over elbows'],
+    mistakes: ['Bouncing bar off chest — control the descent', 'Flaring elbows to 90° — keep them around 45°', 'Lifting butt off bench — maintain arch but keep glutes down'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="20" y="55" width="160" height="8" rx="4" fill="#e5e7eb"/><circle cx="100" cy="40" r="8" fill="#6b7280"/><line x1="100" y1="48" x2="100" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="70" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="130" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="70" y1="35" x2="40" y2="35" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="130" y1="35" x2="160" y2="35" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><rect x="30" y="28" width="20" height="14" rx="3" fill="#2563eb" opacity="0.3"/><rect x="150" y="28" width="20" height="14" rx="3" fill="#2563eb" opacity="0.3"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Flat on bench, feet planted</text></svg>`
+  },
+  'Dumbbell Row (ea)': {
+    muscles: ['Lats', 'Rhomboids', 'Biceps'],
+    desc: 'One knee and hand on bench, other foot on floor. Pull the dumbbell from a dead hang straight up to your hip, squeezing your shoulder blade back at the top.',
+    cues: ['Pull to your hip, not your armpit', 'Big squeeze at the top — hold 1 second', 'Keep back flat like a table, no twisting', 'Let the arm fully extend at the bottom'],
+    mistakes: ['Using momentum to swing the weight up', 'Rounding the lower back', 'Cutting range of motion short at the bottom'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="30" y="50" width="120" height="8" rx="4" fill="#e5e7eb"/><circle cx="65" cy="35" r="8" fill="#6b7280"/><line x1="65" y1="43" x2="90" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="55" x2="130" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="43" x2="50" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="43" x2="65" y2="70" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="65" cy="74" r="5" fill="#2563eb" opacity="0.4"/><line x1="130" y1="50" x2="140" y2="75" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><path d="M 60 70 L 65 58 L 70 70" stroke="#16a34a" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Pull to hip, squeeze at top</text></svg>`
+  },
+  'Dumbbell Row (each arm)': { alias: 'Dumbbell Row (ea)' },
+  'Overhead Press': {
+    muscles: ['Shoulders', 'Triceps', 'Upper Chest'],
+    desc: 'Standing with feet shoulder-width. Start with bar at upper chest, press straight overhead until arms lock out. Squeeze glutes and brace core throughout.',
+    cues: ['Squeeze glutes and brace core — no leaning back', 'Press the bar in a straight line — move your head out of the way', 'Full lockout overhead, biceps by ears', 'Breathe in at the bottom, exhale as you press'],
+    mistakes: ['Excessive back arch — this turns it into an incline press', 'Not locking out fully at the top', 'Pressing the bar forward instead of straight up'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="100" cy="30" r="8" fill="#6b7280"/><line x1="100" y1="38" x2="100" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="72" x2="85" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="72" x2="115" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="48" x2="75" y2="18" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="48" x2="125" y2="18" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="18" x2="140" y2="18" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><rect x="55" y="12" width="12" height="12" rx="2" fill="#2563eb" opacity="0.3"/><rect x="133" y="12" width="12" height="12" rx="2" fill="#2563eb" opacity="0.3"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Straight bar path, core braced</text></svg>`
+  },
+  'Lat Pulldown': {
+    muscles: ['Lats', 'Biceps', 'Rear Delts'],
+    desc: 'Sit with thighs locked under pad. Grip the bar wide, lean back slightly. Pull the bar to your upper chest, driving elbows down and back.',
+    cues: ['Pull elbows DOWN and BACK, not just your hands', 'Lean back 15-20° — not more', 'Full stretch at the top — let arms extend completely', 'Controlled 2-3 sec negative on the way up'],
+    mistakes: ['Pulling behind the neck — dangerous for shoulders', 'Leaning way back and making it a row', 'Using momentum or kipping'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><line x1="40" y1="10" x2="160" y2="10" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="10" x2="100" y2="20" stroke="#e5e7eb" stroke-width="2"/><circle cx="100" cy="35" r="8" fill="#6b7280"/><line x1="100" y1="43" x2="100" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><rect x="80" y="72" width="40" height="6" rx="3" fill="#e5e7eb"/><line x1="100" y1="78" x2="90" y2="98" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="78" x2="110" y2="98" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="48" x2="75" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="48" x2="125" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><path d="M 72 22 L 75 25 L 72 28" stroke="#16a34a" stroke-width="1.5" fill="none"/><path d="M 128 22 L 125 25 L 128 28" stroke="#16a34a" stroke-width="1.5" fill="none"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Elbows down & back, full stretch</text></svg>`
+  },
+  'Face Pulls': {
+    muscles: ['Rear Delts', 'Rotator Cuff', 'Traps'],
+    desc: 'Cable at face height with rope attachment. Pull the rope toward your face, splitting the ends past your ears. Elbows stay high. External rotate at the finish.',
+    cues: ['Elbows HIGH — at or above shoulder level', 'Pull the rope apart at the end, hands past ears', 'Squeeze shoulder blades and hold 1 sec', 'Light weight, high reps — this is a health exercise'],
+    mistakes: ['Using too much weight and turning it into a row', 'Elbows dropping below shoulders', 'Not externally rotating at the finish'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="10" y="20" width="12" height="60" rx="3" fill="#e5e7eb"/><circle cx="120" cy="30" r="8" fill="#6b7280"/><line x1="120" y1="38" x2="120" y2="68" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="68" x2="110" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="68" x2="130" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="35" x2="95" y2="35" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,3"/><line x1="120" y1="45" x2="100" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="45" x2="100" y2="45" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><text x="120" y="15" text-anchor="middle" font-size="9" fill="#16a34a" font-family="Inter">pull apart</text><text x="120" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Elbows high, pull rope apart</text></svg>`
+  },
+  'Bicep Curl (SS)': {
+    muscles: ['Biceps', 'Forearms'],
+    desc: 'Standing with dumbbells at sides. Curl the weights up by bending at the elbow, keeping upper arms pinned to your sides. Lower under control.',
+    cues: ['Upper arms stay glued to your sides', 'Full range — all the way down, all the way up', 'Control the negative — 2 sec down', 'Slight squeeze at the top'],
+    mistakes: ['Swinging the body to get the weight up', 'Not going to full extension at the bottom', 'Elbows drifting forward'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="60" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="60" x2="90" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="60" x2="110" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="38" x2="80" y2="38" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="38" x2="78" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="78" cy="21" r="4" fill="#2563eb" opacity="0.4"/><line x1="100" y1="38" x2="120" y2="38" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="38" x2="120" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="59" r="4" fill="#6b7280" opacity="0.4"/><text x="100" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Upper arms pinned, full ROM</text></svg>`
+  },
+  'Tricep Pushdown (SS)': {
+    muscles: ['Triceps'],
+    desc: 'Cable machine with straight bar or rope at high position. Push down by extending your elbows until arms are straight. Keep elbows pinned at your sides.',
+    cues: ['Elbows stay tucked and stationary', 'Full lockout at the bottom — squeeze triceps', 'Controlled return — don\'t let the cable yank you', 'Slight forward lean from the hips'],
+    mistakes: ['Elbows flaring out or moving forward', 'Using body weight to push down', 'Not fully extending arms at the bottom'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="90" y="5" width="20" height="10" rx="3" fill="#e5e7eb"/><line x1="100" y1="15" x2="100" y2="25" stroke="#e5e7eb" stroke-width="2"/><circle cx="100" cy="35" r="8" fill="#6b7280"/><line x1="100" y1="43" x2="100" y2="68" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="68" x2="90" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="68" x2="110" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="90" y2="50" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="90" y1="50" x2="88" y2="68" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="110" y2="50" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="110" y1="50" x2="112" y2="68" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><path d="M 85 65 L 88 68 L 115 68 L 112 65" stroke="#16a34a" stroke-width="1" fill="none" stroke-dasharray="2,2"/><text x="100" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Elbows pinned, full lockout</text></svg>`
+  },
+  'Barbell Back Squat': {
+    muscles: ['Quads', 'Glutes', 'Hamstrings', 'Core'],
+    desc: 'Bar on upper traps, feet shoulder-width or slightly wider. Sit back and down, keeping chest up. Descend until thighs are at least parallel, then drive through your whole foot to stand.',
+    cues: ['Chest up, eyes forward throughout', 'Push knees out over toes — don\'t let them cave', 'Drive through whole foot, not just toes', 'Brace core hard — big breath in before each rep'],
+    mistakes: ['Knees caving inward (valgus)', 'Rising onto toes / heels lifting', 'Good-morning squat — hips rise faster than chest', 'Not hitting depth — at least parallel'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="100" cy="15" r="8" fill="#6b7280"/><line x1="75" y1="15" x2="125" y2="15" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><rect x="70" y="10" width="12" height="10" rx="2" fill="#2563eb" opacity="0.3"/><rect x="118" y="10" width="12" height="10" rx="2" fill="#2563eb" opacity="0.3"/><line x1="100" y1="23" x2="100" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="80" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="120" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="72" x2="78" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="72" x2="122" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="50" x2="90" y2="50" stroke="#16a34a" stroke-width="1"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Chest up, knees out, full depth</text></svg>`
+  },
+  'Romanian Deadlift': {
+    muscles: ['Hamstrings', 'Glutes', 'Lower Back'],
+    desc: 'Stand holding bar at hip height. Push hips BACK (not down) while keeping a slight knee bend. Lower until you feel a deep hamstring stretch, then squeeze glutes to return.',
+    cues: ['This is a HIP HINGE — push hips back like closing a car door with your butt', 'Bar stays close to legs the entire time', 'Slight knee bend — NOT a stiff-leg deadlift', 'Feel the stretch in hamstrings, not lower back'],
+    mistakes: ['Rounding the lower back', 'Bending the knees too much — this becomes a squat', 'Bar drifting away from legs', 'Going too heavy too soon — feel the stretch first'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="90" cy="25" r="8" fill="#6b7280"/><line x1="90" y1="33" x2="110" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="110" y1="55" x2="108" y2="80" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="108" y1="80" x2="105" y2="100" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="110" y1="55" x2="115" y2="80" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="80" x2="118" y2="100" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="40" x2="78" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="78" y1="55" x2="75" y2="70" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><path d="M 130 55 L 110 55" stroke="#ea580c" stroke-width="1.5" fill="none" marker-end="url(#arr)"/><text x="145" y="58" font-size="9" fill="#ea580c" font-family="Inter">hips back</text><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Hip hinge, bar close to legs</text></svg>`
+  },
+  'Walking Lunges': {
+    muscles: ['Quads', 'Glutes', 'Hamstrings'],
+    desc: 'Step forward into a lunge, lowering until both knees are at ~90°. Drive through the front foot to step the back leg forward into the next lunge.',
+    cues: ['Front knee tracks over toes', 'Torso stays upright — don\'t lean forward', 'Back knee nearly touches the floor', 'Drive through the front heel'],
+    mistakes: ['Taking too short a step — causes knee to go past toes', 'Leaning forward excessively', 'Knee caving inward on the front leg'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="100" cy="15" r="8" fill="#6b7280"/><line x1="100" y1="23" x2="100" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="75" y2="75" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="75" y1="75" x2="72" y2="100" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="125" y2="75" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="125" y1="75" x2="135" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Upright torso, 90° knees</text></svg>`
+  },
+  'Walking Lunges (ea)': { alias: 'Walking Lunges' },
+  'Leg Press': {
+    muscles: ['Quads', 'Glutes'],
+    desc: 'Sit in leg press with feet shoulder-width on the platform. Lower the weight by bending knees toward chest, then press back to start without fully locking knees.',
+    cues: ['Feet shoulder-width, midfoot on platform', 'Lower until knees are at ~90°', 'Don\'t lock knees at the top', 'Keep lower back pressed into the pad'],
+    mistakes: ['Going too deep and lower back rounding off the pad', 'Locking out knees at the top', 'Bouncing out of the bottom'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="20" y="30" width="80" height="50" rx="4" fill="#e5e7eb" opacity="0.5"/><rect x="100" y="20" width="60" height="8" rx="2" fill="#e5e7eb" transform="rotate(45,130,24)"/><circle cx="65" cy="45" r="8" fill="#6b7280"/><line x1="65" y1="53" x2="65" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="60" x2="90" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="50" x2="110" y2="40" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Back flat on pad, controlled reps</text></svg>`
+  },
+  'Dead Bug': {
+    muscles: ['Deep Core', 'Transverse Abs'],
+    desc: 'Lie on back, arms straight up, knees at 90°. Slowly extend one arm overhead and opposite leg out straight while keeping your lower back FLAT on the floor.',
+    cues: ['Lower back stays GLUED to the floor — this is the whole point', 'Move slowly — 3 sec out, 3 sec back', 'Breathe out as you extend', 'If back lifts, reduce range of motion'],
+    mistakes: ['Lower back arching off the floor', 'Moving too fast — this should be slow and controlled', 'Holding breath — exhale on the extension'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><rect x="30" y="50" width="140" height="4" rx="2" fill="#e5e7eb"/><circle cx="140" cy="42" r="7" fill="#6b7280"/><line x1="140" y1="49" x2="90" y2="49" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="49" x2="70" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="49" x2="70" y2="49" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="140" y1="49" x2="155" y2="30" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="140" y1="49" x2="165" y2="49" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><text x="100" y="72" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Back flat on floor, slow & controlled</text></svg>`
+  },
+  'Pallof Press (ea)': {
+    muscles: ['Obliques', 'Deep Core', 'Hip Stabilizers'],
+    desc: 'Stand sideways to cable/band at chest height. Hold handle at chest, then press arms straight out. The cable tries to rotate you — RESIST IT. That\'s the exercise.',
+    cues: ['Stand tall, feet shoulder-width, slight knee bend', 'Press STRAIGHT out from your chest', 'Hold for 2 sec fully extended — resist the rotation', 'Core and glutes squeezed the entire time'],
+    mistakes: ['Letting the cable rotate your torso', 'Using too heavy a weight — this is anti-rotation, not strength', 'Rushing the reps — the hold at extension is key'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="10" y="20" width="10" height="60" rx="3" fill="#e5e7eb"/><line x1="20" y1="45" x2="80" y2="45" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/><circle cx="120" cy="25" r="8" fill="#6b7280"/><line x1="120" y1="33" x2="120" y2="65" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="65" x2="110" y2="88" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="65" x2="130" y2="88" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="45" x2="85" y2="45" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><path d="M 100 38 C 95 45 95 45 100 52" stroke="#ea580c" stroke-width="1.5" fill="none"/><text x="140" y="48" font-size="9" fill="#ea580c" font-family="Inter">resist!</text><text x="115" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Press out, resist rotation</text></svg>`
+  },
+  'Plank': {
+    muscles: ['Core', 'Shoulders', 'Glutes'],
+    desc: 'Forearms on floor, body in a straight line from head to heels. Squeeze everything — abs, glutes, quads. Hold the position without sagging or piking.',
+    cues: ['Straight line: ear, shoulder, hip, ankle', 'Squeeze glutes HARD — this takes pressure off lower back', 'Push forearms into floor — don\'t just hang', 'Breathe normally — don\'t hold your breath'],
+    mistakes: ['Hips sagging toward floor (most common)', 'Butt piking up in the air', 'Looking up — keep neck neutral, look at floor'],
+    figure: `<svg width="200" height="70" viewBox="0 0 200 70"><circle cx="50" cy="25" r="7" fill="#6b7280"/><line x1="55" y1="30" x2="160" y2="30" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="50" y1="30" x2="40" y2="42" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="40" y1="42" x2="40" y2="50" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="160" y1="30" x2="155" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="160" y1="30" x2="165" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="40" y1="30" x2="170" y2="30" stroke="#16a34a" stroke-width="1" stroke-dasharray="4,3"/><text x="100" y="65" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Straight line, squeeze everything</text></svg>`
+  },
+  'Incline Dumbbell Press': {
+    muscles: ['Upper Chest', 'Shoulders', 'Triceps'],
+    desc: 'Bench set to 30-45°. Press dumbbells from chest level straight up, bringing them slightly together at the top. Lower under control.',
+    cues: ['30-45° incline — steeper hits more shoulders', 'Dumbbells start at chest level, press up and slightly in', 'Retract shoulder blades into the bench', 'Full range of motion — deep stretch at bottom'],
+    mistakes: ['Bench too steep (60°+) — becomes a shoulder press', 'Flaring elbows straight out to sides', 'Not controlling the weight on the way down'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="40" y="30" width="100" height="8" rx="4" fill="#e5e7eb" transform="rotate(-25,90,34)"/><circle cx="80" cy="30" r="8" fill="#6b7280"/><line x1="80" y1="38" x2="105" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="38" x2="60" y2="15" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="38" x2="100" y2="15" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="58" cy="12" r="4" fill="#2563eb" opacity="0.4"/><circle cx="102" cy="12" r="4" fill="#2563eb" opacity="0.4"/><text x="100" y="95" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">30-45° angle, full stretch at bottom</text></svg>`
+  },
+  'Cable Row': {
+    muscles: ['Lats', 'Rhomboids', 'Biceps', 'Rear Delts'],
+    desc: 'Seated cable row. Sit upright, chest tall. Pull the handle to your lower chest/upper belly, squeezing shoulder blades together. Control the return.',
+    cues: ['Sit tall — don\'t round forward', 'Pull to your belly button area', 'Squeeze shoulder blades at the peak — hold 1 sec', 'Let arms fully extend on the return'],
+    mistakes: ['Excessive body swing / rocking', 'Rounding the upper back', 'Pulling with arms only — initiate with the back'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="10" y="30" width="12" height="40" rx="3" fill="#e5e7eb"/><circle cx="130" cy="30" r="8" fill="#6b7280"/><line x1="130" y1="38" x2="130" y2="65" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="130" y1="65" x2="140" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="50" x2="110" y2="50" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/><line x1="130" y1="48" x2="110" y2="50" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><text x="110" y="95" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Sit tall, squeeze shoulder blades</text></svg>`
+  },
+  'Landmine Press': {
+    muscles: ['Shoulders', 'Upper Chest', 'Triceps', 'Core'],
+    desc: 'One end of barbell in a corner or landmine. Hold the other end at shoulder height. Press it up and forward at an angle. Great shoulder-friendly pressing movement.',
+    cues: ['Staggered stance for balance', 'Press up and slightly forward — follow the arc', 'Core braced — don\'t lean back', 'Great substitute if overhead press bothers shoulders'],
+    mistakes: ['Leaning back excessively', 'Not bracing core', 'Going too heavy — form matters more here'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><circle cx="5" cy="90" r="4" fill="#e5e7eb"/><line x1="8" y1="87" x2="100" y2="30" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="115" cy="35" r="8" fill="#6b7280"/><line x1="115" y1="43" x2="115" y2="72" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="72" x2="105" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="72" x2="125" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="50" x2="100" y2="30" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><text x="110" y="15" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Press along the arc</text></svg>`
+  },
+  'Chest-Supported DB Row': {
+    muscles: ['Lats', 'Rhomboids', 'Rear Delts'],
+    desc: 'Lie face-down on an incline bench (30-45°). Let dumbbells hang straight down, then row both up to your ribcage. The bench support means zero cheating.',
+    cues: ['Chest stays on the bench — no lifting off', 'Row to your lower ribcage', 'Squeeze shoulder blades together at the top', 'Full extension at the bottom — arms straight'],
+    mistakes: ['Lifting chest off the bench to cheat', 'Shrugging shoulders up instead of pulling back', 'Not going to full arm extension at the bottom'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="40" y="35" width="100" height="8" rx="4" fill="#e5e7eb" transform="rotate(-20,90,39)"/><circle cx="65" cy="28" r="7" fill="#6b7280"/><line x1="68" y1="34" x2="110" y2="45" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="38" x2="78" y2="65" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="95" y1="42" x2="93" y2="68" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="78" cy="69" r="4" fill="#2563eb" opacity="0.4"/><circle cx="93" cy="72" r="4" fill="#2563eb" opacity="0.4"/><text x="100" y="92" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Chest on bench, no cheating</text></svg>`
+  },
+  'Lateral Raises': {
+    muscles: ['Side Delts'],
+    desc: 'Standing with light dumbbells at sides. Raise arms out to the sides until parallel with floor (like a T). Lower slowly.',
+    cues: ['Slight bend in elbows — keep it throughout', 'Lead with your ELBOWS, not your hands', 'Stop at shoulder height — no higher', 'Slow negative — 3 sec down'],
+    mistakes: ['Using too much weight and swinging', 'Shrugging traps up — keep shoulders down', 'Going above shoulder height (engages traps)'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="60" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="60" x2="90" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="60" x2="110" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="38" x2="60" y2="38" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="38" x2="140" y2="38" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="56" cy="38" r="4" fill="#2563eb" opacity="0.4"/><circle cx="144" cy="38" r="4" fill="#2563eb" opacity="0.4"/><line x1="55" y1="35" x2="145" y2="35" stroke="#16a34a" stroke-width="1" stroke-dasharray="3,3"/><text x="100" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">T-shape, lead with elbows</text></svg>`
+  },
+  "Farmer's Carry": {
+    muscles: ['Grip', 'Traps', 'Core', 'Full Body'],
+    desc: 'Pick up heavy dumbbells/kettlebells. Stand tall and walk with them. That\'s it. Simple but brutally effective for grip, core, and total body stability.',
+    cues: ['Stand TALL — shoulders back and down', 'Squeeze the handles hard', 'Take short, controlled steps', 'Brace your core like someone\'s about to punch you'],
+    mistakes: ['Leaning to one side', 'Shrugging shoulders up to ears', 'Taking too-long strides', 'Going too light — this should be heavy'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><circle cx="100" cy="12" r="8" fill="#6b7280"/><line x1="100" y1="20" x2="100" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="88" y2="82" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="112" y2="82" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="35" x2="78" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="78" y1="35" x2="78" y2="62" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><rect x="72" y="62" width="12" height="14" rx="3" fill="#2563eb" opacity="0.4"/><line x1="100" y1="35" x2="122" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="122" y1="35" x2="122" y2="62" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><rect x="116" y="62" width="12" height="14" rx="3" fill="#2563eb" opacity="0.4"/><path d="M 85 88 L 92 82 L 99 88" stroke="#6b7280" stroke-width="1.5" fill="none"/><path d="M 108 82 L 115 88 L 122 82" stroke="#6b7280" stroke-width="1.5" fill="none"/><text x="100" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Stand tall, heavy, short steps</text></svg>`
+  },
+  'Trap Bar Deadlift': {
+    muscles: ['Glutes', 'Quads', 'Hamstrings', 'Back', 'Traps'],
+    desc: 'Stand inside the trap bar, feet hip-width. Grip the handles, brace core, and stand up by driving through your feet. Lower under control.',
+    cues: ['Push the FLOOR away — think "leg press the earth"', 'Chest up, hips and shoulders rise together', 'Arms are just hooks — don\'t pull with your arms', 'Lock out by squeezing glutes at the top'],
+    mistakes: ['Rounding the lower back', 'Hips shooting up first (stiff-leg deadlift)', 'Jerking the bar off the floor — controlled start', 'Not locking out at the top'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><rect x="50" y="80" width="100" height="6" rx="3" fill="#e5e7eb"/><rect x="45" y="70" width="10" height="20" rx="2" fill="#2563eb" opacity="0.3"/><rect x="145" y="70" width="10" height="20" rx="2" fill="#2563eb" opacity="0.3"/><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="90" y2="78" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="110" y2="78" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="38" x2="80" y2="38" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="38" x2="75" y2="62" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="100" y1="38" x2="120" y2="38" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="38" x2="125" y2="62" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><text x="100" y="105" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Stand in bar, push floor away</text></svg>`
+  },
+  'Bulgarian Split Squat': {
+    muscles: ['Quads', 'Glutes', 'Hamstrings'],
+    desc: 'Rear foot elevated on a bench behind you. Lower straight down until front thigh is parallel, then drive up through the front foot.',
+    cues: ['Front foot far enough forward that knee stays over ankle', 'Torso upright — slight forward lean is OK', 'Lower straight DOWN, not forward', 'Drive through the front heel'],
+    mistakes: ['Front foot too close to bench — knee goes way past toes', 'Leaning too far forward', 'Rear foot taking too much load — front leg does the work'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><rect x="130" y="60" width="50" height="8" rx="4" fill="#e5e7eb"/><circle cx="90" cy="20" r="8" fill="#6b7280"/><line x1="90" y1="28" x2="90" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="55" x2="75" y2="78" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="75" y1="78" x2="72" y2="100" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="55" x2="115" y2="60" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="60" x2="138" y2="60" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Rear foot up, drop straight down</text></svg>`
+  },
+  'Bulgarian Split Squat (ea)': { alias: 'Bulgarian Split Squat' },
+  'Hip Thrust': {
+    muscles: ['Glutes', 'Hamstrings'],
+    desc: 'Upper back on a bench, feet flat on floor, barbell across hips. Drive hips up by squeezing glutes until body forms a straight line from shoulders to knees.',
+    cues: ['Drive through your HEELS', 'Squeeze glutes at the top — hard, 1-sec hold', 'Chin tucked — look at the wall, not the ceiling', 'Feet shoulder-width, shins vertical at top'],
+    mistakes: ['Hyperextending the lower back at the top', 'Pushing through toes instead of heels', 'Not achieving full hip extension', 'Looking at ceiling — strains neck'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><rect x="10" y="25" width="50" height="30" rx="4" fill="#e5e7eb"/><circle cx="45" cy="22" r="7" fill="#6b7280"/><line x1="45" y1="28" x2="105" y2="28" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="105" y1="28" x2="130" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="130" y1="55" x2="130" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><rect x="70" y="22" width="30" height="6" rx="3" fill="#2563eb" opacity="0.3"/><path d="M 100 20 L 105 28 L 100 36" stroke="#16a34a" stroke-width="1.5" fill="none"/><text x="100" y="78" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Squeeze glutes hard at top</text></svg>`
+  },
+  'Calf Raises': {
+    muscles: ['Calves (Gastrocnemius + Soleus)'],
+    desc: 'Standing on a step or platform edge with heels hanging off. Rise up onto your toes as high as possible, then lower heels below the step for a full stretch.',
+    cues: ['Full range — go all the way up AND all the way down', 'Pause at the top for 1 sec', 'Slow controlled negative — 2-3 sec down', 'Straight knees for gastroc, bent for soleus'],
+    mistakes: ['Bouncing — use slow, controlled reps', 'Not going to full stretch at the bottom', 'Cutting range of motion short at the top'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="70" y="65" width="60" height="10" rx="3" fill="#e5e7eb"/><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="93" y2="62" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="107" y2="62" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><path d="M 88 62 L 88 55" stroke="#16a34a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/><path d="M 112 62 L 112 55" stroke="#16a34a" stroke-width="1.5" fill="none"/><text x="100" y="55" text-anchor="middle" font-size="8" fill="#16a34a" font-family="Inter">up!</text><text x="100" y="90" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Full range, heels below platform</text></svg>`
+  },
+  'Hanging Knee Raise': {
+    muscles: ['Lower Abs', 'Hip Flexors'],
+    desc: 'Hang from a pull-up bar. Bring your knees up toward your chest by curling your pelvis, then lower under control. The key is the PELVIC CURL, not just lifting knees.',
+    cues: ['Curl your pelvis UP — think "tuck tailbone"', 'Control the swing — no kipping', 'Slow negative on the way down', 'Exhale as you curl up'],
+    mistakes: ['Just lifting knees without curling pelvis — that\'s hip flexors only', 'Swinging and using momentum', 'Dropping legs fast on the return'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><rect x="80" y="5" width="40" height="6" rx="3" fill="#e5e7eb"/><line x1="95" y1="11" x2="95" y2="22" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="105" y1="11" x2="105" y2="22" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><circle cx="100" cy="30" r="8" fill="#6b7280"/><line x1="100" y1="38" x2="100" y2="65" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="65" x2="85" y2="55" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="65" x2="115" y2="55" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="85" y1="55" x2="82" y2="68" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><line x1="115" y1="55" x2="118" y2="68" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><text x="100" y="105" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Curl pelvis, don't just lift knees</text></svg>`
+  },
+  'Hanging Leg Raise': { alias: 'Hanging Knee Raise' },
+  'Cable Woodchop (ea)': {
+    muscles: ['Obliques', 'Core', 'Shoulders'],
+    desc: 'Cable at high position. Stand sideways, pull the handle diagonally across your body from high to low (or low to high). It\'s a rotation with control.',
+    cues: ['Power comes from your CORE rotation, not arms', 'Feet stay planted — rotate through the torso', 'Arms stay relatively straight — they\'re just connectors', 'Control both directions — don\'t let cable snap back'],
+    mistakes: ['Pulling with arms instead of rotating core', 'Feet spinning or shifting', 'Going too fast — control the cable'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="10" y="8" width="10" height="30" rx="3" fill="#e5e7eb"/><circle cx="110" cy="30" r="8" fill="#6b7280"/><line x1="110" y1="38" x2="110" y2="68" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="110" y1="68" x2="100" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="110" y1="68" x2="120" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="20" y1="18" x2="90" y2="48" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/><line x1="110" y1="48" x2="90" y2="48" stroke="#6b7280" stroke-width="2"/><line x1="90" y1="48" x2="130" y2="75" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/><path d="M 105 55 Q 115 65 130 75" stroke="#ea580c" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/><text x="110" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Rotate from core, feet planted</text></svg>`
+  },
+  'Side Plank': {
+    muscles: ['Obliques', 'Core', 'Hip Stabilizers'],
+    desc: 'Lie on your side, prop up on forearm. Lift hips until body is a straight line. Hold. Fire your obliques and glutes to stay stable.',
+    cues: ['Straight line from head to feet', 'Elbow directly under shoulder', 'Top hip stacked over bottom — don\'t roll forward', 'Squeeze top glute to keep hips from sagging'],
+    mistakes: ['Hips sagging toward floor', 'Rolling forward — hips should be stacked', 'Holding breath — breathe normally'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><line x1="40" y1="55" x2="40" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><circle cx="40" cy="28" r="7" fill="#6b7280"/><line x1="40" y1="38" x2="155" y2="38" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="155" y1="38" x2="160" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="160" y1="55" x2="170" y2="55" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="35" x2="170" y2="35" stroke="#16a34a" stroke-width="1" stroke-dasharray="3,3"/><text x="100" y="72" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Straight line, hips stacked</text></svg>`
+  },
+  'Side Plank (ea)': { alias: 'Side Plank' },
+  'Jump Lunges (ea)': {
+    muscles: ['Quads', 'Glutes', 'Calves', 'Power'],
+    desc: 'Start in a lunge position. Explosively jump up, switching legs mid-air, and land in a lunge on the other side. Stick each landing.',
+    cues: ['Explode UP, not forward', 'Land softly — absorb through the legs', 'Same depth on each rep', 'Arms swing naturally for momentum'],
+    mistakes: ['Landing too hard — absorb the impact', 'Knees caving in on landing', 'Not achieving full depth on the lunge'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="100" cy="10" r="8" fill="#6b7280"/><line x1="100" y1="18" x2="100" y2="45" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="45" x2="80" y2="35" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="45" x2="120" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><path d="M 95 45 C 90 30 110 30 105 45" stroke="#16a34a" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/><text x="100" y="40" text-anchor="middle" font-size="9" fill="#16a34a" font-family="Inter">jump!</text><line x1="100" y1="45" x2="80" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="70" x2="78" y2="95" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="45" x2="120" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="70" x2="128" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Explode up, soft landing</text></svg>`
+  },
+  'Box Jumps': {
+    muscles: ['Quads', 'Glutes', 'Calves', 'Power'],
+    desc: 'Stand facing a box/platform. Swing arms and jump onto the box, landing softly with both feet. Stand up fully, then step down (don\'t jump down).',
+    cues: ['Arm swing for momentum', 'Land softly with full foot on the box', 'Stand up fully on top — hips locked out', 'STEP down — don\'t jump down (saves your Achilles)'],
+    mistakes: ['Jumping down instead of stepping — injury risk', 'Landing on the edge of the box', 'Not standing up fully on top'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><rect x="100" y="55" width="60" height="35" rx="4" fill="#e5e7eb"/><circle cx="60" cy="25" r="8" fill="#6b7280"/><line x1="60" y1="33" x2="60" y2="60" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="60" x2="50" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="60" x2="70" y2="85" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><path d="M 65 60 C 80 20 100 20 125 52" stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="4,3"/><text x="95" y="15" text-anchor="middle" font-size="10" fill="#16a34a" font-family="Inter">jump arc</text><text x="100" y="98" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Soft landing, STEP down</text></svg>`
+  },
+  'Medicine Ball Slam': {
+    muscles: ['Core', 'Lats', 'Shoulders', 'Full Body'],
+    desc: 'Hold medicine ball overhead. Slam it into the floor as hard as possible using your whole body. Catch the bounce and repeat. Pure explosive power.',
+    cues: ['Reach ALL the way up on tiptoes', 'Slam with your whole body — not just arms', 'Hinge at the hips as you slam', 'Catch and reset — each rep is max effort'],
+    mistakes: ['Using only arms — engage your core and hips', 'Not reaching full extension overhead', 'Half-hearted slams — GO HARD every rep'],
+    figure: `<svg width="200" height="110" viewBox="0 0 200 110"><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="55" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="90" y2="80" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="55" x2="110" y2="80" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="35" x2="100" y2="8" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/><circle cx="100" cy="4" r="6" fill="#ea580c" opacity="0.4"/><path d="M 100 10 L 100 95" stroke="#ea580c" stroke-width="2" stroke-dasharray="5,4"/><text x="120" y="55" font-size="9" fill="#ea580c" font-family="Inter">SLAM!</text><text x="100" y="108" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Full reach, slam with whole body</text></svg>`
+  },
+  'Med Ball Slam': { alias: 'Medicine Ball Slam' },
+  'Band Lateral Shuffle': {
+    muscles: ['Glute Med', 'Hip Abductors', 'Quads'],
+    desc: 'Band around ankles or above knees. Athletic stance (knees bent, hips back). Shuffle sideways maintaining tension on the band throughout.',
+    cues: ['Stay LOW — athletic stance the entire time', 'Push off with the trailing foot', 'Keep feet apart — don\'t let them come together', 'Chest up, eyes forward'],
+    mistakes: ['Standing up too tall — stay in athletic stance', 'Letting feet come together (loses tension)', 'Leaning to one side instead of staying centered'],
+    figure: `<svg width="200" height="100" viewBox="0 0 200 100"><circle cx="100" cy="18" r="8" fill="#6b7280"/><line x1="100" y1="26" x2="100" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="80" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="70" x2="75" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="50" x2="120" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="70" x2="125" y2="90" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><ellipse cx="100" cy="88" rx="28" ry="5" fill="none" stroke="#ea580c" stroke-width="2"/><path d="M 60 50 L 75 50" stroke="#16a34a" stroke-width="2" fill="none" marker-start="url(#arr)"/><path d="M 140 50 L 125 50" stroke="#16a34a" stroke-width="2" fill="none" marker-start="url(#arr)"/><text x="55" y="48" font-size="9" fill="#16a34a" font-family="Inter">shuffle</text><text x="100" y="100" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Stay low, band tension constant</text></svg>`
+  },
+  // Conditioning / Recovery
+  'Cardio Session': {
+    muscles: ['Heart', 'Lungs', 'Legs'],
+    desc: 'Wk 1-2: 25-min easy jog at conversational pace. Wk 3-4: 5-min warmup, then 6 rounds of 30s hard / 90s walk, then 10-min cooldown.',
+    cues: ['Zone 2 for steady state — you can hold a conversation', 'For intervals: 30s should be genuinely hard', 'Indoor alternatives: rowing machine, bike, stair climber', 'Always finish with 10-min stretch'],
+    mistakes: ['Going too hard on easy days', 'Skipping the cooldown/stretch', 'Not hydrating during longer sessions'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><path d="M 20 50 Q 40 50 50 40 Q 60 30 70 40 Q 80 50 90 50 Q 100 50 110 35 Q 120 20 130 35 Q 140 50 150 50 Q 160 50 170 42 L 180 42" stroke="#ea580c" stroke-width="2.5" fill="none"/><text x="100" y="70" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Build your aerobic base</text></svg>`
+  },
+  'Sprint Intervals': { alias: 'Cardio Session' },
+  '200m Repeats': { alias: 'Cardio Session' },
+  'Post-workout Stretch': {
+    muscles: ['Full Body Flexibility'],
+    desc: 'Hold each stretch 45-60 seconds. Focus on hip flexors, hamstrings, shoulders, and thoracic spine. Breathe deeply into each stretch.',
+    cues: ['Hold each stretch 45-60 seconds minimum', 'Breathe deeply — exhale to go deeper', 'Never bounce — static holds only', 'This is where your flexibility actually improves'],
+    mistakes: ['Rushing through stretches (holding <20s does nothing)', 'Bouncing in and out of stretches', 'Skipping it entirely — this is where mobility gains happen'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><circle cx="60" cy="25" r="7" fill="#6b7280"/><line x1="60" y1="32" x2="80" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="50" x2="80" y2="70" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="80" y1="50" x2="120" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><line x1="120" y1="50" x2="140" y2="65" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/><text x="100" y="15" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Inter">45-60 sec each stretch</text></svg>`
+  },
+  'Activity': {
+    muscles: ['Recovery', 'Fun', 'Mental Health'],
+    desc: 'Pick based on how you feel. Tennis, bike, yoga, walk, or full rest + sauna. The goal is active recovery — move without taxing your body.',
+    cues: ['Feeling good → Light sport (tennis, bike, hoops)', 'Feeling tired → 20-min walk + 15-min yoga', 'Feeling wrecked → Sauna + foam roll. That\'s it.', 'Recovery IS training — don\'t feel guilty'],
+    mistakes: ['Going too hard on recovery day — it\'s not a workout', 'Skipping it entirely — light movement helps recovery', 'Feeling guilty about rest — your body grows during rest'],
+    figure: `<svg width="200" height="80" viewBox="0 0 200 80"><text x="100" y="30" text-anchor="middle" font-size="24">🎾 🚴 🧘</text><text x="100" y="55" text-anchor="middle" font-size="12" fill="#7c3aed" font-family="Inter" font-weight="600">Pick what feels right</text><text x="100" y="70" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Inter">Recovery IS training</text></svg>`
+  }
+};
+
+function resolveExInfo(name) {
+  let info = EX_INFO[name];
+  if (!info) return null;
+  if (info.alias) info = EX_INFO[info.alias];
+  return info || null;
+}
+
+function openExModal(name) {
+  const info = resolveExInfo(name);
+  if (!info) return;
+  document.getElementById('modalTitle').textContent = name;
+  document.getElementById('modalMuscles').innerHTML = info.muscles.map(m => `<span class="muscle-tag">${m}</span>`).join('');
+  document.getElementById('modalFigure').innerHTML = info.figure;
+  document.getElementById('modalDesc').textContent = info.desc;
+  document.getElementById('modalCues').innerHTML = info.cues.map(c => `<li>${c}</li>`).join('');
+  document.getElementById('modalMistakes').innerHTML = info.mistakes.map(m => `<li>${m}</li>`).join('');
+  document.getElementById('modalVideo').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' form tutorial')}`;
+  document.getElementById('exModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('exModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ====== INIT ======
+(async () => {
+  await loadFromServer();
+  renderWeek();
+  renderCheckin();
+})();
+
+// Register service worker for offline use at the gym
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+
+</body>
+</html>

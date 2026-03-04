@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Cards — Summer Ready Training Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media print {
+    body { background: white; }
+    .no-print { display: none !important; }
+    .card { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; border: 1px solid var(--gray-200) !important; }
+    .page-break { page-break-before: always; }
+    .header-bar { background: var(--black) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .phase-badge, .day-badge, .accent-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .warmup-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* Header */
+  .header-bar {
+    background: var(--black);
+    color: var(--white);
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-bar h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+  .header-bar .sub {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+
+  .print-btn {
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .print-btn:hover { opacity: 0.8; }
+
+  /* Layout */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* Phase header */
+  .phase-header {
+    margin: 32px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .phase-badge {
+    background: var(--black);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+  .phase-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .day-badge {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .day-badge.upper { background: var(--blue-light); color: var(--blue); }
+  .day-badge.lower { background: var(--green-light); color: var(--green); }
+  .day-badge.conditioning { background: var(--orange-light); color: var(--orange); }
+  .day-badge.recovery { background: var(--purple-light); color: var(--purple); }
+  .day-badge.warmup { background: var(--gray-800); color: var(--white); }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .card-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-400);
+  }
+
+  /* Table */
+  .exercise-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .exercise-table th {
+    text-align: left;
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-400);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .exercise-table td {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--gray-50);
+    vertical-align: top;
+  }
+  .exercise-table tr:last-child td { border-bottom: none; }
+  .exercise-table .exercise-name {
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+  .exercise-table .sets-reps {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--gray-700);
+    white-space: nowrap;
+  }
+  .exercise-table .rest {
+    color: var(--gray-400);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .exercise-table .note {
+    color: var(--gray-500);
+    font-size: 12px;
+    font-style: italic;
+  }
+  .exercise-table .log-cell {
+    width: 80px;
+    min-width: 80px;
+  }
+  .exercise-table .log-box {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    height: 28px;
+    width: 70px;
+    display: block;
+  }
+
+  /* Section divider row */
+  .section-row td {
+    background: var(--gray-50);
+    padding: 6px 20px !important;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-500);
+    border-bottom: 1px solid var(--gray-100) !important;
+  }
+
+  /* Warmup/cooldown card */
+  .warmup-card {
+    background: var(--gray-50);
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .warmup-card h3 {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+  }
+  .warmup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+  .warmup-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 3px 0;
+  }
+  .warmup-check {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .warmup-item .wi-name { font-weight: 500; color: var(--gray-700); }
+  .warmup-item .wi-detail { color: var(--gray-400); font-size: 12px; }
+
+  /* Accent tags */
+  .accent-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 6px;
+  }
+  .accent-tag.core { background: var(--red-light); color: var(--red); }
+  .accent-tag.superset { background: var(--purple-light); color: var(--purple); }
+  .accent-tag.new { background: var(--orange-light); color: var(--orange); }
+
+  /* Conditioning list */
+  .conditioning-list {
+    padding: 16px 20px;
+    list-style: none;
+  }
+  .conditioning-list li {
+    padding: 8px 0;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid var(--gray-50);
+  }
+  .conditioning-list li:last-child { border-bottom: none; }
+  .conditioning-list .step {
+    background: var(--gray-100);
+    color: var(--gray-500);
+    font-size: 10px;
+    font-weight: 800;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .conditioning-list .step-text {
+    font-weight: 500;
+    color: var(--gray-700);
+  }
+  .conditioning-list .step-detail {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  /* Week label */
+  .week-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <div>
+    <h1>Summer Ready</h1>
+    <div class="sub">8-Week Training Plan &mdash; Workout Cards</div>
+  </div>
+  <button class="print-btn no-print" onclick="window.print()">Print Cards</button>
+</div>
+
+<div class="container">
+
+  <!-- ========== WARMUP & COOLDOWN ========== -->
+  <div class="warmup-card">
+    <h3>Dynamic Warmup &mdash; Every Session (5-7 min)</h3>
+    <div class="warmup-grid">
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Foam Roll</span><span class="wi-detail">— quads, IT band, upper back (60s)</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">World's Greatest Stretch</span><span class="wi-detail">— 5 each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Hip 90/90 Switches</span><span class="wi-detail">— 8 each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Cat-Cow</span><span class="wi-detail">— 10 reps</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Band Pull-Aparts</span><span class="wi-detail">— 15 reps</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Leg Swings</span><span class="wi-detail">— 10 each direction/side</span></div>
+    </div>
+  </div>
+
+  <div class="warmup-card">
+    <h3>Post-Workout Stretch &mdash; Every Session (5 min)</h3>
+    <div class="warmup-grid">
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Couch Stretch</span><span class="wi-detail">— 45s each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Hamstring Stretch</span><span class="wi-detail">— 45s each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Doorway Chest Stretch</span><span class="wi-detail">— 30s each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Cross-Body Shoulder</span><span class="wi-detail">— 30s each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Seated Spinal Twist</span><span class="wi-detail">— 30s each side</span></div>
+      <div class="warmup-item"><div class="warmup-check"></div><span class="wi-name">Hydrate</span><span class="wi-detail">— 16-20 oz water</span></div>
+    </div>
+  </div>
+
+  <!-- ========== PHASE 1 ========== -->
+  <div class="phase-header">
+    <span class="phase-badge">Phase 1</span>
+    <h2>Foundation &mdash; Weeks 1-4</h2>
+  </div>
+
+  <!-- Day 1 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge upper">Upper</span>
+        <span class="card-title">Day 1 — Upper Body Strength</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Barbell Bench Press</td><td class="sets-reps">4 × 8</td><td class="rest">90s</td><td class="note">Control the negative</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Dumbbell Row (each arm)</td><td class="sets-reps">4 × 10</td><td class="rest">60s</td><td class="note">Big squeeze at top</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Overhead Press</td><td class="sets-reps">3 × 10</td><td class="rest">90s</td><td class="note">DB or BB — shoulder key lift</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Lat Pulldown</td><td class="sets-reps">3 × 12</td><td class="rest">60s</td><td class="note">Full stretch at top</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Face Pulls</td><td class="sets-reps">3 × 15</td><td class="rest">45s</td><td class="note">Shoulder health — non-negotiable</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Superset</td></tr>
+        <tr><td class="exercise-name">Bicep Curl <span class="accent-tag superset">SS</span></td><td class="sets-reps">3 × 12</td><td class="rest">—</td><td class="note">Straight into triceps</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Tricep Pushdown <span class="accent-tag superset">SS</span></td><td class="sets-reps">3 × 12</td><td class="rest">45s</td><td class="note">After both = 45s rest</td><td><span class="log-box"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge lower">Lower</span>
+        <span class="card-title">Day 2 — Lower Body Strength + Core</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Barbell Back Squat</td><td class="sets-reps">4 × 8</td><td class="rest">2 min</td><td class="note">Go as deep as mobility allows</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Romanian Deadlift</td><td class="sets-reps">3 × 10</td><td class="rest">90s</td><td class="note">Hamstrings + posterior chain</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Walking Lunges</td><td class="sets-reps">3 × 10 ea</td><td class="rest">60s</td><td class="note">Single-leg stability</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Leg Press</td><td class="sets-reps">3 × 12</td><td class="rest">60s</td><td class="note">Volume without spinal load</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Core Circuit — 3 Rounds</td></tr>
+        <tr><td class="exercise-name">Dead Bug <span class="accent-tag core">Core</span></td><td class="sets-reps">12 reps</td><td class="rest">—</td><td class="note">Anti-extension</td><td></td></tr>
+        <tr><td class="exercise-name">Pallof Press <span class="accent-tag core">Core</span></td><td class="sets-reps">10 ea side</td><td class="rest">—</td><td class="note">Anti-rotation, sport transfer</td><td></td></tr>
+        <tr><td class="exercise-name">Plank <span class="accent-tag core">Core</span></td><td class="sets-reps">30s</td><td class="rest">60s</td><td class="note">Build to 45s by wk 4</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge conditioning">Cardio</span>
+        <span class="card-title">Day 3 — Conditioning + Mobility</span>
+      </div>
+      <span class="card-time">~45 min</span>
+    </div>
+    <ul class="conditioning-list">
+      <li><span class="step">1</span><div><div class="step-text">Weeks 1–2: 25-min easy jog (zone 2 — conversational pace)</div><div class="step-detail">Treadmill fine if cold. Rowing machine or bike also work.</div></div></li>
+      <li><span class="step">2</span><div><div class="step-text">Weeks 3–4: Interval session</div><div class="step-detail">5-min warmup → 6 × (30s hard / 90s walk) → 10-min cooldown</div></div></li>
+      <li><span class="step">3</span><div><div class="step-text">Finish: 10-min dedicated stretch</div><div class="step-detail">Hip flexors, hamstrings, shoulders, thoracic spine — hold each 45-60s</div></div></li>
+    </ul>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge upper">Upper</span>
+        <span class="card-title">Day 4 — Upper Body Power / Hypertrophy</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Incline Dumbbell Press</td><td class="sets-reps">4 × 10</td><td class="rest">90s</td><td class="note">Upper chest focus</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Cable Row</td><td class="sets-reps">4 × 10</td><td class="rest">60s</td><td class="note">Posture + back thickness</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Landmine Press</td><td class="sets-reps">3 × 10</td><td class="rest">60s</td><td class="note">Or Arnold Press</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Chest-Supported DB Row</td><td class="sets-reps">3 × 12</td><td class="rest">60s</td><td class="note">Can't cheat this one</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Lateral Raises</td><td class="sets-reps">3 × 15</td><td class="rest">45s</td><td class="note">Capped shoulders</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Farmer's Carry</td><td class="sets-reps">3 × 40s</td><td class="rest">60s</td><td class="note">Grip for sailing + stability</td><td><span class="log-box"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge lower">Lower</span>
+        <span class="card-title">Day 5 — Lower Body Power + Core</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Trap Bar Deadlift</td><td class="sets-reps">4 × 6</td><td class="rest">2 min</td><td class="note">Or conventional deadlift</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Bulgarian Split Squat</td><td class="sets-reps">3 × 8 ea</td><td class="rest">90s</td><td class="note">Volleyball jumping power</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Hip Thrust</td><td class="sets-reps">3 × 12</td><td class="rest">60s</td><td class="note">Glute power for sprinting</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Calf Raises</td><td class="sets-reps">4 × 15</td><td class="rest">45s</td><td class="note">Ankle stability + aesthetics</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Core Circuit — 3 Rounds</td></tr>
+        <tr><td class="exercise-name">Hanging Knee Raise <span class="accent-tag core">Core</span></td><td class="sets-reps">10 reps</td><td class="rest">—</td><td class="note">→ Leg raises in Phase 2</td><td></td></tr>
+        <tr><td class="exercise-name">Cable Woodchop <span class="accent-tag core">Core</span></td><td class="sets-reps">10 ea side</td><td class="rest">—</td><td class="note">Rotational power</td><td></td></tr>
+        <tr><td class="exercise-name">Side Plank <span class="accent-tag core">Core</span></td><td class="sets-reps">20s each</td><td class="rest">60s</td><td class="note">Oblique stability</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Day 6 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge recovery">Recovery</span>
+        <span class="card-title">Day 6 — Active Recovery / Sport Day</span>
+      </div>
+      <span class="card-time">30-60 min</span>
+    </div>
+    <ul class="conditioning-list">
+      <li><span class="step">A</span><div><div class="step-text">Feeling good → Casual tennis, easy bike, shoot hoops</div><div class="step-detail">Keep it fun and light. 30-45 min.</div></div></li>
+      <li><span class="step">B</span><div><div class="step-text">Feeling beat → 20-min walk + 15-min yoga</div><div class="step-detail">YouTube "yoga for athletes" — tons of good 15-min flows</div></div></li>
+      <li><span class="step">C</span><div><div class="step-text">Full rest → Light foam rolling + sauna</div><div class="step-detail">Recovery IS training. Don't feel guilty.</div></div></li>
+    </ul>
+  </div>
+
+  <!-- ========== PHASE 2 ========== -->
+  <div class="phase-header page-break">
+    <span class="phase-badge">Phase 2</span>
+    <h2>Performance &mdash; Weeks 5-8</h2>
+  </div>
+
+  <div class="warmup-card" style="border-color: var(--orange); background: var(--orange-light);">
+    <h3 style="color: var(--orange);">Phase 2 Changes</h3>
+    <div class="warmup-grid">
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">Compound lifts → heavier, fewer reps (5×5, 5×3)</span></div>
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">Walking Lunges → Jump Lunges (3×8 ea)</span></div>
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">Leg Press → Box Jumps (4×5)</span></div>
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">Plank → 45-60 sec | Knee Raise → Leg Raise</span></div>
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">+ Med Ball Slams (3×8) on Day 4</span></div>
+      <div class="warmup-item"><span class="wi-name" style="color:var(--orange);">+ Band Lateral Shuffles (3×30s) on Day 4</span></div>
+    </div>
+  </div>
+
+  <!-- Phase 2 Day 1 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge upper">Upper</span>
+        <span class="card-title">Day 1 — Upper Body Strength (Phase 2)</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Barbell Bench Press</td><td class="sets-reps">5 × 5</td><td class="rest">2 min</td><td class="note">Heavier than Phase 1</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Dumbbell Row (each arm)</td><td class="sets-reps">4 × 8</td><td class="rest">60s</td><td class="note">Increase weight</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Overhead Press</td><td class="sets-reps">4 × 6</td><td class="rest">90s</td><td class="note">Heavier, fewer reps</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Lat Pulldown</td><td class="sets-reps">3 × 10</td><td class="rest">60s</td><td class="note">Increase weight</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Face Pulls</td><td class="sets-reps">3 × 15</td><td class="rest">45s</td><td class="note">Same — always do these</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Superset</td></tr>
+        <tr><td class="exercise-name">Bicep Curl <span class="accent-tag superset">SS</span></td><td class="sets-reps">3 × 10</td><td class="rest">—</td><td class="note">Heavier</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Tricep Pushdown <span class="accent-tag superset">SS</span></td><td class="sets-reps">3 × 10</td><td class="rest">45s</td><td class="note">Heavier</td><td><span class="log-box"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Phase 2 Day 2 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge lower">Lower</span>
+        <span class="card-title">Day 2 — Lower Body Strength + Core (Phase 2)</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Barbell Back Squat</td><td class="sets-reps">5 × 5</td><td class="rest">2 min</td><td class="note">Heavier than Phase 1</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Romanian Deadlift</td><td class="sets-reps">3 × 8</td><td class="rest">90s</td><td class="note">Increase weight</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Jump Lunges <span class="accent-tag new">New</span></td><td class="sets-reps">3 × 8 ea</td><td class="rest">60s</td><td class="note">Explosive — replaces walking lunges</td><td></td></tr>
+        <tr><td class="exercise-name">Box Jumps <span class="accent-tag new">New</span></td><td class="sets-reps">4 × 5</td><td class="rest">90s</td><td class="note">Plyometric power — replaces leg press</td><td></td></tr>
+        <tr class="section-row"><td colspan="5">Core Circuit — 3 Rounds</td></tr>
+        <tr><td class="exercise-name">Dead Bug <span class="accent-tag core">Core</span></td><td class="sets-reps">15 reps</td><td class="rest">—</td><td class="note">More reps than Phase 1</td><td></td></tr>
+        <tr><td class="exercise-name">Pallof Press <span class="accent-tag core">Core</span></td><td class="sets-reps">12 ea side</td><td class="rest">—</td><td class="note">Heavier band/cable</td><td></td></tr>
+        <tr><td class="exercise-name">Plank <span class="accent-tag core">Core</span></td><td class="sets-reps">45-60s</td><td class="rest">60s</td><td class="note">Progressed from 30s</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Phase 2 Day 3 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge conditioning">Cardio</span>
+        <span class="card-title">Day 3 — Sport Conditioning (Phase 2)</span>
+      </div>
+      <span class="card-time">~45 min</span>
+    </div>
+    <ul class="conditioning-list">
+      <li><span class="step">1</span><div><div class="step-text">5-min warmup jog</div></div></li>
+      <li><span class="step">2</span><div><div class="step-text">8 × (20s ALL-OUT sprint / 40s walk)</div><div class="step-detail">Mirrors volleyball/tennis point bursts</div></div></li>
+      <li><span class="step">3</span><div><div class="step-text">3-min rest (walk)</div></div></li>
+      <li><span class="step">4</span><div><div class="step-text">4 × (200m at 80% / 90s rest)</div><div class="step-detail">Sustained speed endurance</div></div></li>
+      <li><span class="step">5</span><div><div class="step-text">10-min cooldown jog + stretch</div><div class="step-detail">Once weather breaks: take this outside — hill sprints or court drills</div></div></li>
+    </ul>
+  </div>
+
+  <!-- Phase 2 Day 4 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge upper">Upper</span>
+        <span class="card-title">Day 4 — Upper Power + Sport Moves (Phase 2)</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Incline Dumbbell Press</td><td class="sets-reps">4 × 8</td><td class="rest">90s</td><td class="note">Heavier than Phase 1</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Cable Row</td><td class="sets-reps">4 × 8</td><td class="rest">60s</td><td class="note">Heavier</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Landmine Press</td><td class="sets-reps">3 × 8</td><td class="rest">60s</td><td class="note">Or Arnold Press</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Chest-Supported DB Row</td><td class="sets-reps">3 × 10</td><td class="rest">60s</td><td class="note">Heavier</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Lateral Raises</td><td class="sets-reps">3 × 15</td><td class="rest">45s</td><td class="note">Capped shoulders</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Farmer's Carry</td><td class="sets-reps">3 × 50s</td><td class="rest">60s</td><td class="note">Heavier + longer than Phase 1</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Sport-Specific Additions</td></tr>
+        <tr><td class="exercise-name">Medicine Ball Slam <span class="accent-tag new">New</span></td><td class="sets-reps">3 × 8</td><td class="rest">60s</td><td class="note">Explosive full-body power</td><td></td></tr>
+        <tr><td class="exercise-name">Band Lateral Shuffle <span class="accent-tag new">New</span></td><td class="sets-reps">3 × 30s</td><td class="rest">45s</td><td class="note">Tennis/volleyball lateral quickness</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Phase 2 Day 5 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <span class="day-badge lower">Lower</span>
+        <span class="card-title">Day 5 — Lower Body Power + Core (Phase 2)</span>
+      </div>
+      <span class="card-time">~60 min</span>
+    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Rest</th><th>Note</th><th class="log-cell">Weight</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="exercise-name">Trap Bar Deadlift</td><td class="sets-reps">5 × 3</td><td class="rest">2.5 min</td><td class="note">Heavy — max power</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Bulgarian Split Squat</td><td class="sets-reps">3 × 8 ea</td><td class="rest">90s</td><td class="note">Heavier than Phase 1</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Hip Thrust</td><td class="sets-reps">3 × 10</td><td class="rest">60s</td><td class="note">Heavier, fewer reps</td><td><span class="log-box"></span></td></tr>
+        <tr><td class="exercise-name">Calf Raises</td><td class="sets-reps">4 × 15</td><td class="rest">45s</td><td class="note">Add weight</td><td><span class="log-box"></span></td></tr>
+        <tr class="section-row"><td colspan="5">Core Circuit — 3 Rounds</td></tr>
+        <tr><td class="exercise-name">Hanging Leg Raise <span class="accent-tag core">Core</span></td><td class="sets-reps">10 reps</td><td class="rest">—</td><td class="note">Progressed from knee raise</td><td></td></tr>
+        <tr><td class="exercise-name">Cable Woodchop <span class="accent-tag core">Core</span></td><td class="sets-reps">12 ea side</td><td class="rest">—</td><td class="note">Heavier cable</td><td></td></tr>
+        <tr><td class="exercise-name">Side Plank <span class="accent-tag core">Core</span></td><td class="sets-reps">30s each</td><td class="rest">60s</td><td class="note">Progressed from 20s</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>
